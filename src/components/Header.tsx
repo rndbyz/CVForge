@@ -44,7 +44,7 @@ export default function Header() {
 			<div className="flex h-14 items-center px-4">
 				<Link to="/" className="flex items-center gap-2">
 					<FileText className="h-6 w-6 text-primary" />
-					<span className="text-lg font-semibold">CV Builder</span>
+					<span className="text-lg font-semibold">CVForge</span>
 				</Link>
 
 				<div className="ml-auto flex items-center gap-1">
