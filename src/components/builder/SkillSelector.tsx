@@ -107,11 +107,11 @@ export function SkillSelector() {
 					<p className="mb-1 text-xs font-semibold text-muted-foreground">
 						{group.label}
 					</p>
-					<div className="space-y-1">
+					<div className="flex flex-wrap gap-2">
 						{group.items.map((skill) => (
 							<div
 								key={skill.name}
-								className="flex items-center gap-2 rounded-md border px-2 py-1.5"
+								className="flex w-fit items-center gap-2 rounded-md border px-2 py-1.5"
 							>
 								<Checkbox
 									checked={tailored.selectedSkillNames.includes(skill.name)}

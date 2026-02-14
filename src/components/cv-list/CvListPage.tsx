@@ -1,7 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
-import { Plus, Trash2 } from "lucide-react";
+import { DatabaseZap, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useSavedCvs } from "@/hooks";
+import { importAllData } from "@/lib/data-io";
+import demoSeed from "@/lib/demo-seed.json";
 import type { TailoredCV } from "@/lib/schemas";
 import {
 	AlertDialog,
@@ -61,7 +63,22 @@ export function CvListPage() {
 	return (
 		<div className="flex h-full items-start justify-center overflow-auto p-8">
 			<div className="w-full max-w-4xl">
-				<h1 className="mb-6 text-2xl font-bold">My CVs</h1>
+				<div className="mb-6 flex items-center justify-between">
+					<h1 className="text-2xl font-bold">My CVs</h1>
+					{cvs.length === 0 && (
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => {
+								importAllData(demoSeed);
+								window.location.reload();
+							}}
+						>
+							<DatabaseZap className="mr-1 h-3.5 w-3.5" />
+							Load Demo Data
+						</Button>
+					)}
+				</div>
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 					{/* Add CV card */}
 					<button type="button" onClick={handleAdd} className="group">

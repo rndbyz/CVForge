@@ -3,9 +3,14 @@ import {
 	ArrowLeft,
 	ChevronLeft,
 	ChevronRight,
+	Download,
+	Loader2,
 	RotateCcw,
 	Save,
+	FileText,
+	ScrollText,
 } from "lucide-react";
+import { pdf } from "@react-pdf/renderer";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
 	useCvTitles,
@@ -32,6 +37,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BuilderProvider } from "./BuilderContext";
+import { CvPdfDocument } from "./CvPdfDocument";
 import { CvPreview } from "./CvPreview";
 import { KnowledgePanel } from "./KnowledgePanel";
 
@@ -42,6 +48,8 @@ function deepEqual(a: unknown, b: unknown): boolean {
 export function BuilderPage({ cvId }: { cvId: string }) {
 	const navigate = useNavigate();
 	const [panelOpen, setPanelOpen] = useState(true);
+	const [displayMode, setDisplayMode] = useState<"long" | "a4">("a4");
+	const [exporting, setExporting] = useState(false);
 
 	// Shared KB hooks (auto-persisted to localStorage)
 	const [profile, setProfile] = useProfile();
@@ -105,6 +113,20 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 		}
 	}, []);
 
+	// Reset confirmation dialog
+	const [showResetDialog, setShowResetDialog] = useState(false);
+
+	const handleReset = useCallback(() => {
+		if (hasUnsavedChanges) {
+			setShowResetDialog(true);
+		}
+	}, [hasUnsavedChanges]);
+
+	const confirmReset = useCallback(() => {
+		setShowResetDialog(false);
+		onReset();
+	}, [onReset]);
+
 	// Back navigation with unsaved changes dialog
 	const [showLeaveDialog, setShowLeaveDialog] = useState(false);
 
@@ -158,6 +180,22 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 		experiences,
 		education,
 	);
+
+	// PDF export
+	const handleExportPdf = useCallback(async () => {
+		setExporting(true);
+		try {
+			const blob = await pdf(<CvPdfDocument resolved={resolved} />).toBlob();
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `${cvName || "cv"}.pdf`;
+			a.click();
+			URL.revokeObjectURL(url);
+		} finally {
+			setExporting(false);
+		}
+	}, [resolved, cvName]);
 
 	// Handle CV not found
 	if (!savedCv) {
@@ -216,11 +254,34 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 						className="h-8 w-56 text-sm font-medium"
 					/>
 
-					<div className="ml-auto flex items-center gap-2">
+					<div className="flex flex-1 justify-center">
+						<div className="flex items-center rounded-md border">
+							<Button
+								variant={displayMode === "long" ? "secondary" : "ghost"}
+								size="sm"
+								className="h-7 w-20 gap-1 rounded-r-none border-0"
+								onClick={() => setDisplayMode("long")}
+							>
+								<ScrollText className="h-3.5 w-3.5" />
+								Long
+							</Button>
+							<Button
+								variant={displayMode === "a4" ? "secondary" : "ghost"}
+								size="sm"
+								className="h-7 w-20 gap-1 rounded-l-none border-0"
+								onClick={() => setDisplayMode("a4")}
+							>
+								<FileText className="h-3.5 w-3.5" />
+								A4
+							</Button>
+						</div>
+					</div>
+
+					<div className="flex items-center gap-2">
 						<Button
 							variant="outline"
 							size="sm"
-							onClick={onReset}
+							onClick={handleReset}
 							disabled={!hasUnsavedChanges}
 						>
 							<RotateCcw className="mr-1 h-3.5 w-3.5" />
@@ -233,6 +294,19 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 						>
 							<Save className="mr-1 h-3.5 w-3.5" />
 							Save
+						</Button>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={handleExportPdf}
+							disabled={exporting}
+						>
+							{exporting ? (
+								<Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+							) : (
+								<Download className="mr-1 h-3.5 w-3.5" />
+							)}
+							PDF
 						</Button>
 					</div>
 				</div>
@@ -251,6 +325,7 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 
 					{/* Toggle button */}
 					<button
+						data-print-hide
 						type="button"
 						onClick={() => setPanelOpen((prev) => !prev)}
 						className="flex w-6 shrink-0 items-center justify-center border-r bg-background hover:bg-accent transition-colors"
@@ -264,10 +339,32 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 
 					{/* Center: CV Preview */}
 					<div className="flex-1 overflow-auto flex items-start justify-center p-6 bg-muted/30">
-						<CvPreview resolved={resolved} />
+						<CvPreview resolved={resolved} displayMode={displayMode} />
 					</div>
 				</div>
 			</div>
+
+			{/* Reset confirmation dialog */}
+			<AlertDialog
+				open={showResetDialog}
+				onOpenChange={(open) => !open && setShowResetDialog(false)}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Reset changes</AlertDialogTitle>
+						<AlertDialogDescription>
+							This will discard all unsaved changes and revert to the last saved
+							version. Are you sure?
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction onClick={confirmReset}>
+							Reset
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 
 			{/* Leave confirmation dialog */}
 			<AlertDialog

@@ -1,0 +1,195 @@
+{
+  "_version": 1,
+  "_exportedAt": "2026-02-15T00:00:00.000Z",
+  "profile": {
+    "name": "Alexandre Dupont",
+    "email": "alexandre.dupont@gmail.com",
+    "phone": "+33 6 12 34 56 78",
+    "location": "Paris, France",
+    "linkedin": "linkedin.com/in/alexandre-dupont",
+    "github": "github.com/adupont"
+  },
+  "cvTitles": [
+    { "id": "t1", "value": "Senior Full Stack Developer" },
+    { "id": "t2", "value": "Lead Frontend Engineer" },
+    { "id": "t3", "value": "React / TypeScript Specialist" }
+  ],
+  "introductions": [
+    {
+      "id": "intro1",
+      "label": "Full Stack",
+      "text": "Senior Full Stack Developer with 8+ years of experience building scalable web applications. Expert in TypeScript, React, and Node.js with a strong focus on clean architecture, performance optimization, and mentoring engineering teams. Proven track record of delivering high-impact products in fast-paced environments."
+    },
+    {
+      "id": "intro2",
+      "label": "Frontend Lead",
+      "text": "Frontend engineering lead with deep expertise in React ecosystem, design systems, and micro-frontend architectures. Passionate about developer experience, testing strategies, and bridging the gap between design and engineering."
+    }
+  ],
+  "skills": [
+    { "name": "TypeScript", "category": "language", "level": 5, "years": 7, "priority": 10 },
+    { "name": "JavaScript", "category": "language", "level": 5, "years": 9, "priority": 9 },
+    { "name": "Python", "category": "language", "level": 3, "years": 3, "priority": 4 },
+    { "name": "Go", "category": "language", "level": 2, "years": 1, "priority": 3 },
+    { "name": "HTML", "category": "language", "level": 5, "years": 9, "priority": 7 },
+    { "name": "CSS", "category": "language", "level": 5, "years": 9, "priority": 7 },
+    { "name": "SQL", "category": "language", "level": 4, "years": 6, "priority": 6 },
+    { "name": "React", "category": "framework", "level": 5, "years": 7, "priority": 10 },
+    { "name": "Next.js", "category": "framework", "level": 4, "years": 4, "priority": 8 },
+    { "name": "Node.js", "category": "framework", "level": 5, "years": 7, "priority": 9 },
+    { "name": "Express", "category": "framework", "level": 4, "years": 6, "priority": 6 },
+    { "name": "NestJS", "category": "framework", "level": 4, "years": 3, "priority": 7 },
+    { "name": "Tailwind CSS", "category": "framework", "level": 5, "years": 4, "priority": 8 },
+    { "name": "React Native", "category": "framework", "level": 3, "years": 2, "priority": 5 },
+    { "name": "PostgreSQL", "category": "database", "level": 4, "years": 6, "priority": 8 },
+    { "name": "MongoDB", "category": "database", "level": 3, "years": 4, "priority": 5 },
+    { "name": "Redis", "category": "database", "level": 3, "years": 3, "priority": 5 },
+    { "name": "Git", "category": "tool", "level": 5, "years": 9, "priority": 8 },
+    { "name": "Docker", "category": "tool", "level": 4, "years": 5, "priority": 7 },
+    { "name": "Figma", "category": "tool", "level": 3, "years": 4, "priority": 4 },
+    { "name": "GitHub Copilot", "category": "tool", "level": 4, "years": 2, "priority": 6 },
+    { "name": "Storybook", "category": "tool", "level": 4, "years": 4, "priority": 6 },
+    { "name": "AWS", "category": "cloud", "level": 3, "years": 4, "priority": 6 },
+    { "name": "Vercel", "category": "cloud", "level": 4, "years": 3, "priority": 5 },
+    { "name": "CI/CD", "category": "cloud", "level": 4, "years": 5, "priority": 7 },
+    { "name": "Jest", "category": "testing", "level": 5, "years": 6, "priority": 8 },
+    { "name": "Playwright", "category": "testing", "level": 4, "years": 3, "priority": 6 },
+    { "name": "React Testing Library", "category": "testing", "level": 5, "years": 5, "priority": 7 }
+  ],
+  "experiences": [
+    {
+      "id": "exp1",
+      "company": "TechFlow",
+      "location": "Paris, France",
+      "period": "March 2022 - Present",
+      "tech": ["React", "TypeScript", "Node.js", "PostgreSQL", "AWS", "Docker"],
+      "titles": ["Senior Full Stack Developer", "Lead Developer"],
+      "bullets": [
+        "Architected and led the migration from monolithic React app to micro-frontend architecture, reducing build times by 60%.",
+        "Designed and implemented a real-time collaboration system serving 50k+ concurrent users using WebSocket and Redis pub/sub.",
+        "Established company-wide design system (Storybook + Tailwind) adopted by 4 product teams, reducing UI inconsistencies by 80%.",
+        "Mentored a team of 5 developers through code reviews, pair programming, and weekly tech talks.",
+        "Implemented comprehensive E2E testing strategy with Playwright, achieving 95% coverage on critical paths.",
+        "Led the adoption of TypeScript across all frontend repositories, reducing production bugs by 40%."
+      ]
+    },
+    {
+      "id": "exp2",
+      "company": "DataViz Corp",
+      "location": "Lyon, France",
+      "period": "September 2019 - February 2022",
+      "tech": ["React", "Next.js", "TypeScript", "GraphQL", "MongoDB", "Vercel"],
+      "titles": ["Full Stack Developer", "Frontend Developer"],
+      "bullets": [
+        "Built a real-time analytics dashboard processing 1M+ data points per day with interactive D3.js visualizations.",
+        "Migrated legacy jQuery application to Next.js, improving page load times by 70% and SEO scores by 45 points.",
+        "Developed a custom GraphQL API layer aggregating data from 6 microservices into a unified schema.",
+        "Implemented server-side rendering and incremental static regeneration, reducing server costs by 35%.",
+        "Introduced automated visual regression testing, catching 15+ UI bugs per sprint before production."
+      ]
+    },
+    {
+      "id": "exp3",
+      "company": "StartupLab",
+      "location": "Toulouse, France",
+      "period": "June 2017 - August 2019",
+      "tech": ["React", "Node.js", "Express", "PostgreSQL", "Docker"],
+      "titles": ["Full Stack Developer", "Junior Developer"],
+      "bullets": [
+        "Developed a SaaS platform for project management from scratch, reaching 10k users in the first year.",
+        "Built RESTful APIs with Express and PostgreSQL, handling 500+ requests per second.",
+        "Implemented OAuth2 authentication flow and role-based access control system.",
+        "Set up CI/CD pipeline with GitHub Actions and Docker, reducing deployment time from 2 hours to 15 minutes.",
+        "Created an interactive Kanban board with drag-and-drop, real-time sync, and offline support."
+      ]
+    },
+    {
+      "id": "exp4",
+      "company": "WebAgency Plus",
+      "location": "Bordeaux, France",
+      "period": "January 2016 - May 2017",
+      "tech": ["JavaScript", "React", "CSS", "WordPress"],
+      "titles": ["Frontend Developer"],
+      "bullets": [
+        "Delivered 20+ responsive websites for SMB clients using React and modern CSS.",
+        "Built reusable component library that reduced project delivery time by 30%.",
+        "Collaborated directly with designers to implement pixel-perfect UIs from Figma mockups.",
+        "Optimized website performance, achieving 90+ Lighthouse scores across all client projects."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": "edu1",
+      "degree": "Master of Computer Science",
+      "institution": "INSA Toulouse",
+      "period": "2013 - 2016",
+      "details": [
+        "Specialization in Software Engineering and Distributed Systems",
+        "Thesis: Real-time data synchronization in distributed web applications"
+      ]
+    },
+    {
+      "id": "edu2",
+      "degree": "DUT Informatique",
+      "institution": "IUT Paul Sabatier, Toulouse",
+      "period": "2011 - 2013",
+      "details": [
+        "Ranked top 5% of class",
+        "Focus on algorithms, databases, and web development"
+      ]
+    }
+  ],
+  "savedCvs": [
+    {
+      "id": "demo-cv-1",
+      "name": "Full Stack - TechFlow Application",
+      "createdAt": "2026-02-15T10:00:00.000Z",
+      "updatedAt": "2026-02-15T10:00:00.000Z",
+      "titleId": "t1",
+      "introductionId": "intro1",
+      "selectedSkillNames": [
+        "TypeScript", "JavaScript", "HTML", "CSS", "SQL",
+        "React", "Next.js", "Node.js", "NestJS", "Tailwind CSS",
+        "PostgreSQL", "Redis",
+        "Git", "Docker", "GitHub Copilot", "Storybook",
+        "AWS", "CI/CD",
+        "Jest", "Playwright", "React Testing Library"
+      ],
+      "experiences": [
+        {
+          "experienceId": "exp1",
+          "selectedTitle": "Senior Full Stack Developer",
+          "selectedBullets": [
+            "Architected and led the migration from monolithic React app to micro-frontend architecture, reducing build times by 60%.",
+            "Designed and implemented a real-time collaboration system serving 50k+ concurrent users using WebSocket and Redis pub/sub.",
+            "Established company-wide design system (Storybook + Tailwind) adopted by 4 product teams, reducing UI inconsistencies by 80%.",
+            "Mentored a team of 5 developers through code reviews, pair programming, and weekly tech talks.",
+            "Implemented comprehensive E2E testing strategy with Playwright, achieving 95% coverage on critical paths."
+          ]
+        },
+        {
+          "experienceId": "exp2",
+          "selectedTitle": "Full Stack Developer",
+          "selectedBullets": [
+            "Built a real-time analytics dashboard processing 1M+ data points per day with interactive D3.js visualizations.",
+            "Migrated legacy jQuery application to Next.js, improving page load times by 70% and SEO scores by 45 points.",
+            "Developed a custom GraphQL API layer aggregating data from 6 microservices into a unified schema.",
+            "Implemented server-side rendering and incremental static regeneration, reducing server costs by 35%."
+          ]
+        },
+        {
+          "experienceId": "exp3",
+          "selectedTitle": "Full Stack Developer",
+          "selectedBullets": [
+            "Developed a SaaS platform for project management from scratch, reaching 10k users in the first year.",
+            "Built RESTful APIs with Express and PostgreSQL, handling 500+ requests per second.",
+            "Implemented OAuth2 authentication flow and role-based access control system.",
+            "Set up CI/CD pipeline with GitHub Actions and Docker, reducing deployment time from 2 hours to 15 minutes."
+          ]
+        }
+      ],
+      "educationIds": ["edu1", "edu2"]
+    }
+  ]
+}
