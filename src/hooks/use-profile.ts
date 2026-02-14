@@ -1,9 +1,8 @@
-import { type Header, headerSchema } from "@/lib/schemas";
+import { type Profile, profileStorageSchema } from "@/lib/schemas";
 import { useLocalStorage } from "./use-local-storage";
 
-const defaultProfile: Header = {
+const defaultProfile: Profile = {
 	name: "",
-	title: "",
 	email: "",
 	phone: "",
 	location: "",
@@ -12,5 +11,9 @@ const defaultProfile: Header = {
 };
 
 export function useProfile() {
-	return useLocalStorage<Header>("user_profile", headerSchema, defaultProfile);
+	return useLocalStorage<Profile>(
+		"user_profile",
+		profileStorageSchema,
+		defaultProfile,
+	);
 }

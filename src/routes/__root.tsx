@@ -7,11 +7,8 @@ export const Route = createRootRoute({
 	head: () => ({
 		meta: [
 			{ charSet: "utf-8" },
-			{
-				name: "viewport",
-				content: "width=device-width, initial-scale=1",
-			},
-			{ title: "AI CV Optimizer" },
+			{ name: "viewport", content: "width=device-width, initial-scale=1" },
+			{ title: "CV Builder" },
 		],
 		links: [{ rel: "stylesheet", href: appCss }],
 	}),
@@ -26,7 +23,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<Header />
-				<main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
+				<main className="h-[calc(100vh-3.5rem)]">{children}</main>
 				<Toaster />
 				<Scripts />
 			</body>
