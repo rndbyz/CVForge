@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Download, FileText, Upload } from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
+import { useLocale } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import {
 	downloadExport,
@@ -9,14 +10,16 @@ import {
 	importAllData,
 	readJsonFile,
 } from "@/lib/data-io";
+import type { Locale } from "@/lib/i18n";
 
 export default function Header() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [locale, setLocale, t] = useLocale();
 
 	const handleExport = () => {
 		const data = exportAllData();
 		downloadExport(data);
-		toast.success("Data exported successfully");
+		toast.success(locale === "fr" ? "Données exportées" : "Data exported successfully");
 	};
 
 	const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,17 +30,19 @@ export default function Header() {
 			const json = await readJsonFile(file);
 			const result = importAllData(json);
 			if (result.success) {
-				toast.success("Data imported successfully. Reloading...");
+				toast.success(locale === "fr" ? "Importé. Rechargement..." : "Data imported successfully. Reloading...");
 				setTimeout(() => window.location.reload(), 500);
 			} else {
-				toast.error(result.error ?? "Import failed");
+				toast.error(result.error ?? (locale === "fr" ? "Échec de l'import" : "Import failed"));
 			}
 		} catch {
-			toast.error("Failed to read file");
+			toast.error(locale === "fr" ? "Impossible de lire le fichier" : "Failed to read file");
 		}
 
 		if (fileInputRef.current) fileInputRef.current.value = "";
 	};
+
+	const otherLocale: Locale = locale === "en" ? "fr" : "en";
 
 	return (
 		<header className="border-b bg-background">
@@ -50,7 +55,7 @@ export default function Header() {
 				<div className="ml-auto flex items-center gap-1">
 					<Button variant="ghost" size="sm" onClick={handleExport}>
 						<Download className="mr-1 h-4 w-4" />
-						Export
+						{t("export")}
 					</Button>
 					<Button
 						variant="ghost"
@@ -58,7 +63,7 @@ export default function Header() {
 						onClick={() => fileInputRef.current?.click()}
 					>
 						<Upload className="mr-1 h-4 w-4" />
-						Import
+						{t("import")}
 					</Button>
 					<input
 						ref={fileInputRef}
@@ -67,6 +72,14 @@ export default function Header() {
 						onChange={handleImport}
 						className="hidden"
 					/>
+					<Button
+						variant="outline"
+						size="sm"
+						className="ml-2 w-10 font-medium"
+						onClick={() => setLocale(otherLocale)}
+					>
+						{otherLocale.toUpperCase()}
+					</Button>
 				</div>
 			</div>
 		</header>

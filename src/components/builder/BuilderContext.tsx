@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react";
 import type {
+	Certification,
 	CvTitle,
 	Education,
 	Experience,
@@ -25,6 +26,8 @@ export type BuilderContextValue = {
 	setExperiences: Setter<Experience[]>;
 	education: Education[];
 	setEducation: Setter<Education[]>;
+	certifications: Certification[];
+	setCertifications: Setter<Certification[]>;
 
 	// Current CV working copy (in-memory until save)
 	tailored: TailoredCV;

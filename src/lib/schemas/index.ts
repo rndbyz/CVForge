@@ -1,3 +1,8 @@
+export {
+	type Certification,
+	certificationSchema,
+	certificationsSchema,
+} from "./certification";
 export { type CvTitle, cvTitleSchema, cvTitlesSchema } from "./cv-title";
 export {
 	type Education,

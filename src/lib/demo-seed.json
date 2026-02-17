@@ -140,6 +140,30 @@
       ]
     }
   ],
+  "certifications": [
+    {
+      "id": "cert1",
+      "name": "AWS Certified Solutions Architect – Associate",
+      "issuer": "Amazon Web Services",
+      "date": "March 2023",
+      "expiryDate": "March 2026",
+      "credentialId": "AWS-SAA-C03-12345"
+    },
+    {
+      "id": "cert2",
+      "name": "Professional Scrum Master I (PSM I)",
+      "issuer": "Scrum.org",
+      "date": "November 2021",
+      "credentialId": "PSM-I-789012"
+    },
+    {
+      "id": "cert3",
+      "name": "Google Cloud Professional Data Engineer",
+      "issuer": "Google Cloud",
+      "date": "June 2024",
+      "expiryDate": "June 2026"
+    }
+  ],
   "savedCvs": [
     {
       "id": "demo-cv-1",
@@ -189,7 +213,8 @@
           ]
         }
       ],
-      "educationIds": ["edu1", "edu2"]
+      "educationIds": ["edu1", "edu2"],
+      "certificationIds": ["cert1", "cert2"]
     }
   ]
 }

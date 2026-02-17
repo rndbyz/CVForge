@@ -6,6 +6,7 @@ import {
 	skillSchema,
 	experiencesSchema,
 	educationsSchema,
+	certificationsSchema,
 	savedCvsSchema,
 } from "./schemas";
 
@@ -16,6 +17,7 @@ const STORAGE_KEYS = {
 	skills: "base_skills",
 	experiences: "kb_experiences",
 	education: "kb_education",
+	certifications: "kb_certifications",
 	savedCvs: "saved_cvs",
 } as const;
 
@@ -28,6 +30,7 @@ const exportSchema = z.object({
 	skills: z.array(skillSchema).optional(),
 	experiences: experiencesSchema.optional(),
 	education: educationsSchema.optional(),
+	certifications: certificationsSchema.optional(),
 	savedCvs: savedCvsSchema.optional(),
 });
 
@@ -59,7 +62,7 @@ export function downloadExport(data: ExportData) {
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement("a");
 	a.href = url;
-	a.download = `cv-builder-export-${new Date().toISOString().slice(0, 10)}.json`;
+	a.download = `cvforge-export-${new Date().toISOString().slice(0, 10)}.json`;
 	a.click();
 	URL.revokeObjectURL(url);
 }

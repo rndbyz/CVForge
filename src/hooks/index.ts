@@ -1,8 +1,11 @@
+export { useApiKeys } from "./use-api-keys";
+export { useCertifications } from "./use-certifications";
 export { useCvTitles } from "./use-cv-titles";
 export { useEducation } from "./use-education";
 export { useExperiences } from "./use-experiences";
 export { useIntroductions } from "./use-introductions";
 export { useLocalStorage } from "./use-local-storage";
+export { useLocale } from "./use-locale";
 export { useProfile } from "./use-profile";
 export { useResolvedCv } from "./use-resolved-cv";
 export { useSavedCvs } from "./use-saved-cvs";

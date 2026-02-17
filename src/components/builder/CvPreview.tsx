@@ -1,6 +1,7 @@
-import { Github, Globe, Mail, MapPin, Phone } from "lucide-react";
+import { Award, Github, Globe, Mail, MapPin, Phone } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { ResolvedCV } from "@/hooks/use-resolved-cv";
+import { useLocale } from "@/hooks";
 import { SKILL_CATEGORIES, SKILL_CATEGORY_LABELS } from "@/lib/schemas";
 
 
@@ -23,8 +24,9 @@ export function CvPreview({
 	resolved,
 	displayMode = "a4",
 }: { resolved: ResolvedCV; displayMode?: "long" | "a4" }) {
-	const { profile, title, introduction, skills, experiences, education } =
+	const { profile, title, introduction, skills, experiences, education, certifications } =
 		resolved;
+	const [, , t] = useLocale();
 
 	const measureRef = useRef<HTMLDivElement>(null);
 	const [pages, setPages] = useState(1);
@@ -41,8 +43,6 @@ export function CvPreview({
 			const gutterH = mmToPx(PAGE_GUTTER_MM);
 			if (pageH <= 0) return;
 			const contentH = measureRef.current.scrollHeight;
-			// First page has usable height = pageH - bottom gutter
-			// Subsequent pages have usable height = pageH - top gutter - bottom gutter
 			const firstPageUsable = pageH - gutterH;
 			const nextPageUsable = pageH - gutterH * 2;
 			if (contentH <= firstPageUsable) {
@@ -63,13 +63,14 @@ export function CvPreview({
 		introduction ||
 		skills.length > 0 ||
 		experiences.length > 0 ||
-		education.length > 0;
+		education.length > 0 ||
+		certifications.length > 0;
 
 	if (!hasContent) {
 		return (
-			<div className="flex h-full w-full max-w-[800px] items-center justify-center rounded-lg border bg-white p-12 shadow-sm">
+			<div className="flex h-full w-full max-w-200 items-center justify-center rounded-lg border bg-white p-12 shadow-sm">
 				<p className="text-center text-muted-foreground">
-					Start building your CV by adding content in the side panel.
+					{t("startBuilding")}
 				</p>
 			</div>
 		);
@@ -122,11 +123,11 @@ export function CvPreview({
 				</div>
 			)}
 
-			{/* Introduction */}
+			{/* Summary */}
 			{introduction && (
 				<section className="mb-4">
 					<h2 className="mb-1 text-xs font-bold uppercase tracking-wider text-gray-500">
-						Summary
+						{t("summary")}
 					</h2>
 					<p className="text-gray-700">{introduction}</p>
 				</section>
@@ -136,7 +137,7 @@ export function CvPreview({
 			{skillsByCategory.length > 0 && (
 				<section className="mb-4">
 					<h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500">
-						Skills
+						{t("skills")}
 					</h2>
 					<div className="space-y-1">
 						{skillsByCategory.map((group) => (
@@ -157,7 +158,7 @@ export function CvPreview({
 			{experiences.length > 0 && (
 				<section className="mb-4">
 					<h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500">
-						Experience
+						{t("experience")}
 					</h2>
 					<div className="space-y-3">
 						{experiences.map((exp, i) => (
@@ -186,7 +187,7 @@ export function CvPreview({
 								)}
 								{exp.tech && exp.tech.length > 0 && (
 									<p className="mt-1 text-xs text-gray-400">
-										Tech: {exp.tech.join(", ")}
+										{t("tech")}: {exp.tech.join(", ")}
 									</p>
 								)}
 							</div>
@@ -197,9 +198,9 @@ export function CvPreview({
 
 			{/* Education */}
 			{education.length > 0 && (
-				<section>
+				<section className="mb-4">
 					<h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500">
-						Education
+						{t("education")}
 					</h2>
 					<div className="space-y-2">
 						{education.map((edu) => (
@@ -230,22 +231,52 @@ export function CvPreview({
 					</div>
 				</section>
 			)}
+
+			{/* Certifications */}
+			{certifications.length > 0 && (
+				<section>
+					<h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500">
+						{t("certifications")}
+					</h2>
+					<div className="space-y-1">
+						{certifications.map((cert) => (
+							<div key={cert.id} className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<Award className="h-3 w-3 shrink-0 text-gray-400" />
+									<div>
+										<span className="font-semibold text-gray-900">
+											{cert.name}
+										</span>
+										<span className="text-gray-500"> — {cert.issuer}</span>
+										{cert.credentialId && (
+											<span className="ml-1 text-xs text-gray-400">
+												#{cert.credentialId}
+											</span>
+										)}
+									</div>
+								</div>
+								<span className="shrink-0 text-xs text-gray-400">
+									{cert.date}
+									{cert.expiryDate ? ` → ${cert.expiryDate}` : ""}
+								</span>
+							</div>
+						))}
+					</div>
+				</section>
+			)}
 		</div>
 	);
 
 	/* ---- Long mode: single flowing block ---- */
 	if (displayMode !== "a4") {
 		return (
-			<div className="w-full max-w-[800px] rounded-lg border bg-white shadow-sm">
+			<div className="w-full max-w-200 rounded-lg border bg-white shadow-sm">
 				{cvContent}
 			</div>
 		);
 	}
 
 	/* ---- A4 mode: separate pages ---- */
-	// Each page is 297mm. We use spacer divs for gutters so content is properly clipped.
-	// Page 0: no top gutter, 10mm bottom gutter → 287mm usable
-	// Page N: 10mm top + 10mm bottom gutter → 277mm usable
 	const gutterSize = `${PAGE_GUTTER_MM}mm`;
 	const firstUsable = `${A4_HEIGHT_MM - PAGE_GUTTER_MM}mm`;
 	const nextUsable = `${A4_HEIGHT_MM - PAGE_GUTTER_MM * 2}mm`;

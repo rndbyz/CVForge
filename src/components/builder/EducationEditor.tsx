@@ -11,11 +11,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLocale } from "@/hooks";
 import type { Education } from "@/lib/schemas";
 import { useBuilder } from "./BuilderContext";
 
 export function EducationEditor() {
 	const { education, setEducation, tailored, setTailored } = useBuilder();
+	const [, , t] = useLocale();
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [editingEdu, setEditingEdu] = useState<Education | null>(null);
 	const [form, setForm] = useState({
@@ -123,35 +125,35 @@ export function EducationEditor() {
 			))}
 
 			{education.length === 0 && (
-				<p className="text-xs text-muted-foreground">No education yet.</p>
+				<p className="text-xs text-muted-foreground">{t("noEducation")}</p>
 			)}
 
 			<Button variant="outline" size="sm" className="w-full" onClick={openAdd}>
 				<Plus className="mr-1 h-3 w-3" />
-				Add education
+				{t("addEducation")}
 			</Button>
 
 			<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
 				<DialogContent className="sm:max-w-md">
 					<DialogHeader>
 						<DialogTitle>
-							{editingEdu ? "Edit Education" : "Add Education"}
+							{editingEdu ? t("editEducation") : t("newEducation")}
 						</DialogTitle>
 					</DialogHeader>
 					<div className="grid gap-3 py-2">
 						<div className="grid gap-1.5">
-							<Label className="text-xs">Degree</Label>
+							<Label className="text-xs">{t("degree")}</Label>
 							<Input
 								value={form.degree}
 								onChange={(e) =>
 									setForm((f) => ({ ...f, degree: e.target.value }))
 								}
-								placeholder="e.g. Master of Computer Science"
+								placeholder={t("degreePlaceholder")}
 								className="h-8 text-sm"
 							/>
 						</div>
 						<div className="grid gap-1.5">
-							<Label className="text-xs">Institution</Label>
+							<Label className="text-xs">{t("institution")}</Label>
 							<Input
 								value={form.institution}
 								onChange={(e) =>
@@ -164,20 +166,18 @@ export function EducationEditor() {
 							/>
 						</div>
 						<div className="grid gap-1.5">
-							<Label className="text-xs">Period</Label>
+							<Label className="text-xs">{t("period")}</Label>
 							<Input
 								value={form.period}
 								onChange={(e) =>
 									setForm((f) => ({ ...f, period: e.target.value }))
 								}
-								placeholder="2018 - 2020"
+								placeholder={t("periodPlaceholder")}
 								className="h-8 text-sm"
 							/>
 						</div>
 						<div className="grid gap-1.5">
-							<Label className="text-xs">
-								Details (one per line, optional)
-							</Label>
+							<Label className="text-xs">{t("details")}</Label>
 							<Input
 								value={form.details}
 								onChange={(e) =>
@@ -186,17 +186,17 @@ export function EducationEditor() {
 										details: e.target.value,
 									}))
 								}
-								placeholder="Honours, specialization..."
+								placeholder={t("detailsPlaceholder")}
 								className="h-8 text-sm"
 							/>
 						</div>
 					</div>
 					<DialogFooter>
 						<Button variant="outline" onClick={() => setDialogOpen(false)}>
-							Cancel
+							{t("cancel")}
 						</Button>
 						<Button onClick={saveEducation}>
-							{editingEdu ? "Save" : "Add"}
+							{editingEdu ? t("saveBtn") : t("add")}
 						</Button>
 					</DialogFooter>
 				</DialogContent>

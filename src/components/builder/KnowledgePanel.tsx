@@ -5,6 +5,8 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useLocale } from "@/hooks";
+import { CertificationEditor } from "./CertificationEditor";
 import { EducationEditor } from "./EducationEditor";
 import { ExperienceSelector } from "./ExperienceSelector";
 import { IntroductionSelector } from "./IntroductionSelector";
@@ -13,48 +15,56 @@ import { SkillSelector } from "./SkillSelector";
 import { TitleSelector } from "./TitleSelector";
 
 export function KnowledgePanel() {
+	const [, , t] = useLocale();
+
 	return (
 		<ScrollArea className="h-full">
 			<div className="p-4">
-				<h2 className="mb-4 text-lg font-semibold">Knowledge Base</h2>
+				<h2 className="mb-4 text-lg font-semibold">{t("knowledgeBase")}</h2>
 				<Accordion
 					type="multiple"
 					defaultValue={["profile", "titles", "skills", "experiences"]}
 				>
 					<AccordionItem value="profile">
-						<AccordionTrigger>Profile</AccordionTrigger>
+						<AccordionTrigger>{t("profile")}</AccordionTrigger>
 						<AccordionContent>
 							<ProfileEditor />
 						</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="titles">
-						<AccordionTrigger>CV Titles</AccordionTrigger>
+						<AccordionTrigger>{t("cvTitles")}</AccordionTrigger>
 						<AccordionContent>
 							<TitleSelector />
 						</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="introductions">
-						<AccordionTrigger>Introductions</AccordionTrigger>
+						<AccordionTrigger>{t("introductions")}</AccordionTrigger>
 						<AccordionContent>
 							<IntroductionSelector />
 						</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="skills">
-						<AccordionTrigger>Skills</AccordionTrigger>
+						<AccordionTrigger>{t("skills")}</AccordionTrigger>
 						<AccordionContent>
 							<SkillSelector />
 						</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="experiences">
-						<AccordionTrigger>Experiences</AccordionTrigger>
+						<AccordionTrigger>{t("experiences")}</AccordionTrigger>
 						<AccordionContent>
 							<ExperienceSelector />
 						</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="education">
-						<AccordionTrigger>Education</AccordionTrigger>
+						<AccordionTrigger>{t("education")}</AccordionTrigger>
 						<AccordionContent>
 							<EducationEditor />
+						</AccordionContent>
+					</AccordionItem>
+					<AccordionItem value="certifications">
+						<AccordionTrigger>{t("certifications")}</AccordionTrigger>
+						<AccordionContent>
+							<CertificationEditor />
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>

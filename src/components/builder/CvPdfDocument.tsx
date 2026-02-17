@@ -234,10 +234,41 @@ const styles = StyleSheet.create({
 		fontSize: 10,
 		color: "#6b7280",
 	},
+
+	/* ---- Certifications ---- */
+	certEntry: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		marginBottom: 3,
+	},
+	certLeft: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 4,
+		flex: 1,
+	},
+	certName: {
+		fontFamily: "Helvetica-Bold",
+		fontSize: 10,
+		color: "#111827",
+	},
+	certIssuer: {
+		fontSize: 10,
+		color: "#6b7280",
+	},
+	certId: {
+		fontSize: 8,
+		color: "#9ca3af",
+	},
+	certDate: {
+		fontSize: 8,
+		color: "#9ca3af",
+	},
 });
 
 export function CvPdfDocument({ resolved }: { resolved: ResolvedCV }) {
-	const { profile, title, introduction, skills, experiences, education } =
+	const { profile, title, introduction, skills, experiences, education, certifications } =
 		resolved;
 
 	const skillsByCategory = SKILL_CATEGORIES.map((cat) => ({
@@ -385,6 +416,26 @@ export function CvPdfDocument({ resolved }: { resolved: ResolvedCV }) {
 										))}
 									</View>
 								)}
+							</View>
+						))}
+					</View>
+				)}
+				{/* Certifications */}
+				{certifications.length > 0 && (
+					<View style={styles.section}>
+						<Text style={styles.sectionTitle}>Certifications</Text>
+						{certifications.map((cert) => (
+							<View key={cert.id} style={styles.certEntry} wrap={false}>
+								<View style={styles.certLeft}>
+									<Text style={styles.certName}>{cert.name}</Text>
+									<Text style={styles.certIssuer}> — {cert.issuer}</Text>
+									{cert.credentialId && (
+										<Text style={styles.certId}> #{cert.credentialId}</Text>
+									)}
+								</View>
+								<Text style={styles.certDate}>
+									{cert.date}{cert.expiryDate ? ` → ${cert.expiryDate}` : ""}
+								</Text>
 							</View>
 						))}
 					</View>

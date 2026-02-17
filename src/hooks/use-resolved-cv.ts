@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import type {
+	Certification,
 	CvTitle,
 	Education,
 	Experience,
@@ -25,6 +26,7 @@ export type ResolvedCV = {
 	skills: Skill[];
 	experiences: ResolvedExperience[];
 	education: Education[];
+	certifications: Certification[];
 };
 
 export function useResolvedCv(
@@ -35,6 +37,7 @@ export function useResolvedCv(
 	allSkills: Skill[],
 	allExperiences: Experience[],
 	allEducation: Education[],
+	allCertifications: Certification[],
 ): ResolvedCV {
 	return useMemo(() => {
 		const title =
@@ -61,7 +64,10 @@ export function useResolvedCv(
 		const education = allEducation.filter((e) =>
 			tailored.educationIds.includes(e.id),
 		);
-		return { profile, title, introduction, skills, experiences, education };
+		const certifications = allCertifications.filter((c) =>
+			(tailored.certificationIds ?? []).includes(c.id),
+		);
+		return { profile, title, introduction, skills, experiences, education, certifications };
 	}, [
 		profile,
 		tailored,
@@ -70,5 +76,6 @@ export function useResolvedCv(
 		allSkills,
 		allExperiences,
 		allEducation,
+		allCertifications,
 	]);
 }

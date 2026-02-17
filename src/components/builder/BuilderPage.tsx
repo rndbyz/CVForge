@@ -13,10 +13,12 @@ import {
 import { pdf } from "@react-pdf/renderer";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+	useCertifications,
 	useCvTitles,
 	useEducation,
 	useExperiences,
 	useIntroductions,
+	useLocale,
 	useProfile,
 	useResolvedCv,
 	useSavedCvs,
@@ -47,6 +49,7 @@ function deepEqual(a: unknown, b: unknown): boolean {
 
 export function BuilderPage({ cvId }: { cvId: string }) {
 	const navigate = useNavigate();
+	const [, , t] = useLocale();
 	const [panelOpen, setPanelOpen] = useState(true);
 	const [displayMode, setDisplayMode] = useState<"long" | "a4">("a4");
 	const [exporting, setExporting] = useState(false);
@@ -58,6 +61,7 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 	const [skills, setSkills] = useSkills();
 	const [experiences, setExperiences] = useExperiences();
 	const [education, setEducation] = useEducation();
+	const [certifications, setCertifications] = useCertifications();
 
 	// Multi-CV storage
 	const { getCvById, updateCv } = useSavedCvs();
@@ -179,6 +183,7 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 		skills,
 		experiences,
 		education,
+		certifications,
 	);
 
 	// PDF export
@@ -202,13 +207,13 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 		return (
 			<div className="flex h-full items-center justify-center">
 				<div className="text-center">
-					<p className="text-lg text-muted-foreground">CV not found</p>
+					<p className="text-lg text-muted-foreground">{t("cvNotFound")}</p>
 					<Button
 						variant="link"
 						onClick={() => navigate({ to: "/" })}
 						className="mt-2"
 					>
-						Go back to list
+						{t("goBackToList")}
 					</Button>
 				</div>
 			</div>
@@ -230,6 +235,8 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 				setExperiences,
 				education,
 				setEducation,
+				certifications,
+				setCertifications,
 				tailored: workingCopy ?? savedCv,
 				setTailored: setWorkingCopy as (
 					value: TailoredCV | ((prev: TailoredCV) => TailoredCV),
@@ -263,7 +270,7 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 								onClick={() => setDisplayMode("long")}
 							>
 								<ScrollText className="h-3.5 w-3.5" />
-								Long
+								{t("long")}
 							</Button>
 							<Button
 								variant={displayMode === "a4" ? "secondary" : "ghost"}
@@ -285,7 +292,7 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 							disabled={!hasUnsavedChanges}
 						>
 							<RotateCcw className="mr-1 h-3.5 w-3.5" />
-							Reset
+							{t("reset")}
 						</Button>
 						<Button
 							size="sm"
@@ -293,7 +300,7 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 							disabled={!hasUnsavedChanges}
 						>
 							<Save className="mr-1 h-3.5 w-3.5" />
-							Save
+							{t("save")}
 						</Button>
 						<Button
 							variant="outline"
@@ -351,16 +358,15 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Reset changes</AlertDialogTitle>
+						<AlertDialogTitle>{t("resetConfirmTitle")}</AlertDialogTitle>
 						<AlertDialogDescription>
-							This will discard all unsaved changes and revert to the last saved
-							version. Are you sure?
+							{t("resetConfirmDesc")}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
 						<AlertDialogAction onClick={confirmReset}>
-							Reset
+							{t("reset")}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -373,16 +379,15 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Unsaved changes</AlertDialogTitle>
+						<AlertDialogTitle>{t("leaveConfirmTitle")}</AlertDialogTitle>
 						<AlertDialogDescription>
-							You have unsaved changes. Are you sure you want to leave? Your
-							changes will be lost.
+							{t("leaveConfirmDesc")}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
 						<AlertDialogAction onClick={confirmLeave}>
-							Discard & Leave
+							{t("discardLeave")}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
