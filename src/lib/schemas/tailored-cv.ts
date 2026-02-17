@@ -17,6 +17,7 @@ export const tailoredCvSchema = z.object({
 	experiences: z.array(selectedExperienceSchema),
 	educationIds: z.array(z.string()),
 	certificationIds: z.array(z.string()).optional(),
+	jobDescription: z.string().optional(),
 });
 
 export const savedCvsSchema = z.array(tailoredCvSchema);

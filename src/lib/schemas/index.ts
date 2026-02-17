@@ -1,4 +1,10 @@
 export {
+	type AiProvider,
+	type ApiKeys,
+	aiProviderSchema,
+	apiKeysSchema,
+} from "./api-keys";
+export {
 	type Certification,
 	certificationSchema,
 	certificationsSchema,

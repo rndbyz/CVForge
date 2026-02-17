@@ -9,6 +9,7 @@ import {
 	Save,
 	FileText,
 	ScrollText,
+	Target,
 } from "lucide-react";
 import { pdf } from "@react-pdf/renderer";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -42,6 +43,7 @@ import { BuilderProvider } from "./BuilderContext";
 import { CvPdfDocument } from "./CvPdfDocument";
 import { CvPreview } from "./CvPreview";
 import { KnowledgePanel } from "./KnowledgePanel";
+import { MatchPanel } from "./MatchPanel";
 
 function deepEqual(a: unknown, b: unknown): boolean {
 	return JSON.stringify(a) === JSON.stringify(b);
@@ -51,6 +53,7 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 	const navigate = useNavigate();
 	const [, , t] = useLocale();
 	const [panelOpen, setPanelOpen] = useState(true);
+	const [matchPanelOpen, setMatchPanelOpen] = useState(false);
 	const [displayMode, setDisplayMode] = useState<"long" | "a4">("a4");
 	const [exporting, setExporting] = useState(false);
 
@@ -286,6 +289,14 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 
 					<div className="flex items-center gap-2">
 						<Button
+							variant={matchPanelOpen ? "secondary" : "outline"}
+							size="sm"
+							onClick={() => setMatchPanelOpen((v) => !v)}
+						>
+							<Target className="mr-1 h-3.5 w-3.5" />
+							Score
+						</Button>
+						<Button
 							variant="outline"
 							size="sm"
 							onClick={handleReset}
@@ -348,6 +359,29 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 					<div className="flex-1 overflow-auto flex items-start justify-center p-6 bg-muted/30">
 						<CvPreview resolved={resolved} displayMode={displayMode} />
 					</div>
+
+					{/* Right toggle button */}
+					<button
+						type="button"
+						onClick={() => setMatchPanelOpen((prev) => !prev)}
+						className="flex w-6 shrink-0 items-center justify-center border-l bg-background hover:bg-accent transition-colors"
+					>
+						{matchPanelOpen ? (
+							<ChevronRight className="h-4 w-4" />
+						) : (
+							<ChevronLeft className="h-4 w-4" />
+						)}
+					</button>
+
+					{/* Match panel */}
+					<aside
+						className={cn(
+							"shrink-0 border-l bg-card transition-all duration-300 overflow-hidden",
+							matchPanelOpen ? "w-95" : "w-0",
+						)}
+					>
+						{matchPanelOpen && <MatchPanel resolved={resolved} />}
+					</aside>
 				</div>
 			</div>
 
