@@ -3,12 +3,14 @@ import {
 	CheckCircle2,
 	ChevronDown,
 	ChevronUp,
+	FileWarning,
 	Loader2,
 	XCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { useApiKeys, useLocale } from "@/hooks";
-import { analyzeMatch, type MatchResult } from "@/lib/ai-match";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { analyzeMatch, matchResultSchema, type MatchResult } from "@/lib/ai-match";
 import type { AiProvider } from "@/lib/schemas";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,6 +27,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useBuilder } from "./BuilderContext";
 import type { ResolvedCV } from "@/hooks/use-resolved-cv";
+
+const nullableMatchResultSchema = matchResultSchema.nullable();
+
+/* ---- Sub-components ---- */
 
 function ScoreRing({ score }: { score: number }) {
 	const color =
@@ -51,15 +57,36 @@ function ScoreRing({ score }: { score: number }) {
 	);
 }
 
+function ImpactBadge({ impact }: { impact: "high" | "medium" | "low" }) {
+	const cls =
+		impact === "high"
+			? "border-red-200 bg-red-50 text-red-700"
+			: impact === "medium"
+				? "border-yellow-200 bg-yellow-50 text-yellow-700"
+				: "border-gray-200 bg-gray-50 text-gray-500";
+	return (
+		<Badge variant="outline" className={`text-xs ${cls}`}>
+			{impact}
+		</Badge>
+	);
+}
+
+/* ---- Main panel ---- */
+
 export function MatchPanel({ resolved }: { resolved: ResolvedCV }) {
 	const { tailored, setTailored } = useBuilder();
 	const [apiKeys, setApiKeys] = useApiKeys();
 	const [, , t] = useLocale();
 
-	const [result, setResult] = useState<MatchResult | null>(null);
+	const [result, setResult] = useLocalStorage<MatchResult | null>(
+		`match_result_${tailored.id}`,
+		nullableMatchResultSchema,
+		null,
+	);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [keyVisible, setKeyVisible] = useState(false);
+	const [descOpen, setDescOpen] = useState(!result);
 
 	const jobDescription = tailored.jobDescription ?? "";
 
@@ -81,6 +108,7 @@ export function MatchPanel({ resolved }: { resolved: ResolvedCV }) {
 				provider: apiKeys.provider,
 			});
 			setResult(data);
+			setDescOpen(false);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Unknown error");
 		} finally {
@@ -93,15 +121,37 @@ export function MatchPanel({ resolved }: { resolved: ResolvedCV }) {
 			<div className="space-y-4 p-4">
 				<h2 className="text-lg font-semibold">Match Score</h2>
 
-				{/* Job description input */}
-				<div className="space-y-1.5">
-					<Label className="text-xs">Job Description</Label>
-					<Textarea
-						value={jobDescription}
-						onChange={(e) => setJobDescription(e.target.value)}
-						placeholder="Paste the job description here..."
-						className="min-h-40 resize-none text-sm"
-					/>
+				{/* Job description (collapsible) */}
+				<div className="rounded-md border">
+					<button
+						type="button"
+						className="flex w-full items-center justify-between px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground"
+						onClick={() => setDescOpen((v) => !v)}
+					>
+						<span>
+							{descOpen
+								? "Job Description"
+								: jobDescription.trim()
+									? jobDescription.trim().slice(0, 60) +
+										(jobDescription.trim().length > 60 ? "…" : "")
+									: "Job Description"}
+						</span>
+						{descOpen ? (
+							<ChevronUp className="h-3.5 w-3.5 shrink-0" />
+						) : (
+							<ChevronDown className="h-3.5 w-3.5 shrink-0" />
+						)}
+					</button>
+					{descOpen && (
+						<div className="border-t px-3 pb-3 pt-2">
+							<Textarea
+								value={jobDescription}
+								onChange={(e) => setJobDescription(e.target.value)}
+								placeholder="Paste the job description here..."
+								className="min-h-40 resize-none text-sm"
+							/>
+						</div>
+					)}
 				</div>
 
 				{/* API key config (collapsible) */}
@@ -192,7 +242,8 @@ export function MatchPanel({ resolved }: { resolved: ResolvedCV }) {
 				{/* Results */}
 				{result && (
 					<div className="space-y-4">
-						{/* Score */}
+
+						{/* Score + meta */}
 						<div className="flex flex-col items-center gap-2 py-2">
 							<ScoreRing score={result.overallScore} />
 							<p className="text-sm text-muted-foreground">
@@ -202,16 +253,110 @@ export function MatchPanel({ resolved }: { resolved: ResolvedCV }) {
 										? "Partial match"
 										: "Low match"}
 							</p>
+							<div className="flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
+								<span
+									className={
+										result.jobTitleFound
+											? "text-green-600"
+											: "text-red-500"
+									}
+								>
+									{result.jobTitleFound ? "✓" : "✗"} Job title
+								</span>
+								<span>·</span>
+								<span
+									className={
+										result.measurableResultsCount >= 3
+											? "text-green-600"
+											: "text-yellow-500"
+									}
+								>
+									{result.measurableResultsCount} measurable result
+									{result.measurableResultsCount !== 1 ? "s" : ""}
+								</span>
+								<span>·</span>
+								<span
+									className={
+										result.wordCount >= 400
+											? "text-green-600"
+											: "text-yellow-500"
+									}
+								>
+									~{result.wordCount} words
+								</span>
+							</div>
 						</div>
 
-						{/* Skill matches */}
-						{result.skillMatches.length > 0 && (
+						{/* ATS Tips */}
+						{(result.atsTips?.length ?? 0) > 0 && (
+							<div className="space-y-1.5">
+								<h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+									ATS Issues
+								</h3>
+								<div className="space-y-1.5">
+									{result.atsTips.map((tip, i) => (
+										<div
+											key={i}
+											className="flex items-start gap-2 rounded-md border border-yellow-200 bg-yellow-50 p-2.5 text-xs"
+										>
+											<FileWarning className="mt-0.5 h-3.5 w-3.5 shrink-0 text-yellow-600" />
+											<div>
+												<span className="font-medium text-yellow-800">
+													{tip.category}:{" "}
+												</span>
+												<span className="text-yellow-700">{tip.message}</span>
+											</div>
+										</div>
+									))}
+								</div>
+							</div>
+						)}
+
+						{/* Hard skill matches */}
+						{(result.hardSkillMatches?.length ?? 0) > 0 && (
 							<div className="space-y-1.5">
 								<h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
 									{t("skills")}
 								</h3>
 								<div className="space-y-1">
-									{result.skillMatches.map((sm) => (
+									{result.hardSkillMatches.map((sm) => (
+										<div
+											key={sm.skill}
+											className="flex items-center justify-between gap-2 text-sm"
+										>
+											<div className="flex items-center gap-2 min-w-0">
+												{sm.found ? (
+													<CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" />
+												) : (
+													<XCircle className="h-4 w-4 shrink-0 text-red-400" />
+												)}
+												<span
+													className={
+														sm.found
+															? "text-foreground truncate"
+															: "text-muted-foreground truncate"
+													}
+												>
+													{sm.skill}
+												</span>
+											</div>
+											<span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+												{sm.resumeCount}/{sm.jdCount}×
+											</span>
+										</div>
+									))}
+								</div>
+							</div>
+						)}
+
+						{/* Soft skill matches */}
+						{(result.softSkillMatches?.length ?? 0) > 0 && (
+							<div className="space-y-1.5">
+								<h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+									Soft Skills
+								</h3>
+								<div className="space-y-1">
+									{result.softSkillMatches.map((sm) => (
 										<div
 											key={sm.skill}
 											className="flex items-center gap-2 text-sm"
@@ -237,7 +382,7 @@ export function MatchPanel({ resolved }: { resolved: ResolvedCV }) {
 						)}
 
 						{/* Missing keywords */}
-						{result.missingKeywords.length > 0 && (
+						{(result.missingKeywords?.length ?? 0) > 0 && (
 							<div className="space-y-1.5">
 								<h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
 									Missing Keywords
@@ -257,7 +402,7 @@ export function MatchPanel({ resolved }: { resolved: ResolvedCV }) {
 						)}
 
 						{/* Tips */}
-						{result.tips.length > 0 && (
+						{(result.tips?.length ?? 0) > 0 && (
 							<div className="space-y-1.5">
 								<h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
 									Suggestions
@@ -268,9 +413,12 @@ export function MatchPanel({ resolved }: { resolved: ResolvedCV }) {
 											key={i}
 											className="rounded-md border bg-card p-2.5 text-sm"
 										>
-											<span className="font-medium text-foreground">
-												{tip.section}:{" "}
-											</span>
+											<div className="mb-1 flex items-center gap-2">
+												<span className="font-medium text-foreground">
+													{tip.section}
+												</span>
+												<ImpactBadge impact={tip.impact} />
+											</div>
 											<span className="text-muted-foreground">
 												{tip.message}
 											</span>
