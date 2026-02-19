@@ -4,10 +4,10 @@ import {
 	ChevronLeft,
 	ChevronRight,
 	Download,
-	FileText,
 	Loader2,
 	RotateCcw,
 	Save,
+	FileText,
 	ScrollText,
 	Target,
 } from "lucide-react";
@@ -49,13 +49,11 @@ function deepEqual(a: unknown, b: unknown): boolean {
 	return JSON.stringify(a) === JSON.stringify(b);
 }
 
-type CenterTab = "preview" | "score";
-
 export function BuilderPage({ cvId }: { cvId: string }) {
 	const navigate = useNavigate();
 	const [, , t] = useLocale();
 	const [panelOpen, setPanelOpen] = useState(true);
-	const [centerTab, setCenterTab] = useState<CenterTab>("preview");
+	const [matchPanelOpen, setMatchPanelOpen] = useState(false);
 	const [displayMode, setDisplayMode] = useState<"long" | "a4">("a4");
 	const [exporting, setExporting] = useState(false);
 
@@ -152,9 +150,14 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 		navigate({ to: "/" });
 	}, [navigate]);
 
-	// Block in-app navigation (legacy API — withResolver pattern not available in this router version)
-	// eslint-disable-next-line @typescript-eslint/no-deprecated
-	useBlocker(() => setShowLeaveDialog(true), hasUnsavedChanges);
+	// Block in-app navigation via TanStack Router
+	useBlocker({
+		shouldBlockFn: () => hasUnsavedChanges,
+		withResolver: false,
+		blockerFn: () => {
+			setShowLeaveDialog(true);
+		},
+	});
 
 	// Block browser close/refresh
 	useEffect(() => {
@@ -261,54 +264,38 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 						className="h-8 w-56 text-sm font-medium"
 					/>
 
-					{/* Center tabs */}
 					<div className="flex flex-1 justify-center">
 						<div className="flex items-center rounded-md border">
 							<Button
-								variant={centerTab === "preview" ? "secondary" : "ghost"}
+								variant={displayMode === "long" ? "secondary" : "ghost"}
 								size="sm"
-								className="h-7 gap-1.5 rounded-r-none border-0 px-3"
-								onClick={() => setCenterTab("preview")}
+								className="h-7 w-20 gap-1 rounded-r-none border-0"
+								onClick={() => setDisplayMode("long")}
 							>
-								<FileText className="h-3.5 w-3.5" />
-								Preview
+								<ScrollText className="h-3.5 w-3.5" />
+								{t("long")}
 							</Button>
 							<Button
-								variant={centerTab === "score" ? "secondary" : "ghost"}
+								variant={displayMode === "a4" ? "secondary" : "ghost"}
 								size="sm"
-								className="h-7 gap-1.5 rounded-l-none border-0 px-3"
-								onClick={() => setCenterTab("score")}
+								className="h-7 w-20 gap-1 rounded-l-none border-0"
+								onClick={() => setDisplayMode("a4")}
 							>
-								<Target className="h-3.5 w-3.5" />
-								Score
+								<FileText className="h-3.5 w-3.5" />
+								A4
 							</Button>
 						</div>
 					</div>
 
-					{/* Right actions */}
 					<div className="flex items-center gap-2">
-						{/* display mode toggle — only visible in preview tab */}
-						{centerTab === "preview" && (
-							<div className="flex items-center rounded-md border">
-								<Button
-									variant={displayMode === "long" ? "secondary" : "ghost"}
-									size="sm"
-									className="h-7 w-16 gap-1 rounded-r-none border-0"
-									onClick={() => setDisplayMode("long")}
-								>
-									<ScrollText className="h-3.5 w-3.5" />
-									{t("long")}
-								</Button>
-								<Button
-									variant={displayMode === "a4" ? "secondary" : "ghost"}
-									size="sm"
-									className="h-7 w-12 gap-1 rounded-l-none border-0"
-									onClick={() => setDisplayMode("a4")}
-								>
-									A4
-								</Button>
-							</div>
-						)}
+						<Button
+							variant={matchPanelOpen ? "secondary" : "outline"}
+							size="sm"
+							onClick={() => setMatchPanelOpen((v) => !v)}
+						>
+							<Target className="mr-1 h-3.5 w-3.5" />
+							Score
+						</Button>
 						<Button
 							variant="outline"
 							size="sm"
@@ -344,7 +331,7 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 
 				{/* Main content */}
 				<div className="flex flex-1 overflow-hidden">
-					{/* Left knowledge panel */}
+					{/* Side panel */}
 					<aside
 						className={cn(
 							"shrink-0 border-r bg-card transition-all duration-300 overflow-hidden",
@@ -354,7 +341,7 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 						{panelOpen && <KnowledgePanel />}
 					</aside>
 
-					{/* Left toggle */}
+					{/* Toggle button */}
 					<button
 						data-print-hide
 						type="button"
@@ -368,18 +355,33 @@ export function BuilderPage({ cvId }: { cvId: string }) {
 						)}
 					</button>
 
-					{/* Center content — tabs */}
-					<div className="flex-1 overflow-hidden">
-						{centerTab === "preview" ? (
-							<div className="h-full overflow-auto flex items-start justify-center p-6 bg-muted/30">
-								<CvPreview resolved={resolved} displayMode={displayMode} />
-							</div>
-						) : (
-							<div className="h-full overflow-hidden">
-								<MatchPanel resolved={resolved} />
-							</div>
-						)}
+					{/* Center: CV Preview */}
+					<div className="flex-1 overflow-auto flex items-start justify-center p-6 bg-muted/30">
+						<CvPreview resolved={resolved} displayMode={displayMode} />
 					</div>
+
+					{/* Right toggle button */}
+					<button
+						type="button"
+						onClick={() => setMatchPanelOpen((prev) => !prev)}
+						className="flex w-6 shrink-0 items-center justify-center border-l bg-background hover:bg-accent transition-colors"
+					>
+						{matchPanelOpen ? (
+							<ChevronRight className="h-4 w-4" />
+						) : (
+							<ChevronLeft className="h-4 w-4" />
+						)}
+					</button>
+
+					{/* Match panel */}
+					<aside
+						className={cn(
+							"shrink-0 border-l bg-card transition-all duration-300 overflow-hidden",
+							matchPanelOpen ? "w-95" : "w-0",
+						)}
+					>
+						{matchPanelOpen && <MatchPanel resolved={resolved} />}
+					</aside>
 				</div>
 			</div>
 
